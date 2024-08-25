@@ -21,6 +21,7 @@ func NewBusinessRepo(data *Data, logger log.Logger) biz.BusinessRepo {
 	}
 }
 
+// 实现rpc调用。
 func (br *businessrepo) CreateReply(ctx context.Context, replyInfo *model.ReviewReplyInfo) (*model.ReviewReplyInfo, error) {
 	err := br.data.query.Transaction(func(tx *query.Query) error {
 		if err := tx.ReviewReplyInfo.WithContext(ctx).Save(replyInfo); err != nil {
