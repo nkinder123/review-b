@@ -1,0 +1,4 @@
+[submodule "api"]
+	path = api
+	url = git@github.com:nkinder123/public_proto.git
+	branch = master
