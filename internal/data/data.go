@@ -1,53 +1,61 @@
 package data
 
 import (
-	"gorm.io/driver/mysql"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
+	"context"
+	"github.com/go-kratos/kratos/contrib/registry/consul/v2"
+	"github.com/go-kratos/kratos/v2/registry"
+	"github.com/go-kratos/kratos/v2/transport/grpc"
+	"github.com/hashicorp/consul/api"
+	v1 "review-b/api/review/v1"
 	"review-b/internal/conf"
-	"review-b/internal/data/query"
-	"strings"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewDB, NewData, NewBusinessRepo)
+var ProviderSet = wire.NewSet(NewDisCovery, NewGRPCClient, NewData, NewBusinessRepo)
 
 // Data .
 type Data struct {
 	// TODO wrapped database client
-	query *query.Query
-	log   *log.Helper
+	//s这个data中使用的是rpc的client
+	rc  v1.ReviewClient
+	log *log.Helper
 }
 
 // NewData .
-func NewData(db *gorm.DB, logger log.Logger) (*Data, func(), error) {
+func NewData(c *conf.Data, rc v1.ReviewClient, logger log.Logger) (*Data, func(), error) {
 	cleanup := func() {
 		log.NewHelper(logger).Info("closing the data resources")
 	}
-	query.SetDefault(db)
-	return &Data{
-		query: query.Q,
-		log:   log.NewHelper(logger),
-	}, cleanup, nil
+	return &Data{rc: rc, log: log.NewHelper(logger)}, cleanup, nil
 }
 
-func NewDB(c *conf.Data) (db *gorm.DB, err error) {
-	switch strings.ToLower(c.Database.Driver) {
-	case "mysql":
-		db, err = gorm.Open(mysql.Open(c.Database.Source))
-		if err != nil {
-			return nil, err
-		}
-		return db, nil
-	case "sqlite":
-		db, err = gorm.Open(sqlite.Open(c.Database.Source))
-		if err != nil {
-			return nil, err
-		}
-		return db, nil
+func NewGRPCClient(d registry.Discovery) v1.ReviewClient {
+	conn, err := grpc.DialInsecure(
+		context.Background(),
+		grpc.WithEndpoint("discovery:///review.service"),
+		grpc.WithTimeout(3600*time.Second),
+		grpc.WithDiscovery(d),
+	)
+
+	if err != nil {
+		panic("rpc client connect has error")
 	}
-	panic("the db open has panic")
+	client := v1.NewReviewClient(conn)
+	return client
+}
+func NewDisCovery(c *conf.Register) registry.Discovery {
+	config := api.DefaultConfig()
+	config.Address = c.Address
+	config.Scheme = c.Scheme
+	client, err := api.NewClient(config)
+	if err != nil {
+		panic(err)
+	}
+	// new dis with consul client
+	dis := consul.New(client)
+	return dis
 }

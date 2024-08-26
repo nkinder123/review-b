@@ -2,14 +2,12 @@ package biz
 
 import (
 	"context"
-	"errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"review-b/internal/data/model"
 )
 
 type BusinessRepo interface {
 	CreateReply(context.Context, *model.ReviewReplyInfo) (*model.ReviewReplyInfo, error)
-	SearchReview(context.Context, int64) (*model.ReviewInfo, error)
 }
 
 type BusinessUsecase struct {
@@ -49,16 +47,4 @@ func (uc *BusinessUsecase) CreateReply(ctx context.Context, info *model.ReviewRe
 		return nil, err
 	}
 	return reply, nil
-}
-
-func (uc *BusinessUsecase) SearchReview(ctx context.Context, info *model.ReviewReplyInfo) (*model.ReviewInfo, error) {
-	if info == nil {
-		return nil, errors.New("[biz] reviewReply is null ")
-	}
-	review, err := uc.repo.SearchReview(ctx, info.ReviewID)
-	if err != nil {
-		return nil, errors.New("[biz] search review info has error")
-	}
-	return review, err
-
 }
