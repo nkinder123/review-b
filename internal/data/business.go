@@ -38,3 +38,21 @@ func (br *businessrepo) CreateReply(ctx context.Context, replyInfo *model.Review
 	}
 	return &model.ReviewReplyInfo{ReplyID: review.ReplyId}, nil
 }
+
+func (br *businessrepo) CreateAppeal(ctx context.Context, info *model.ReviewAppealInfo) (*model.ReviewAppealInfo, error) {
+	request := &v1.CreateAppealRequest{
+		AppealId:  info.AppealID,
+		ReviewId:  info.ReviewID,
+		StoreId:   info.StoreID,
+		Status:    info.Status,
+		Reason:    info.Reason,
+		Content:   info.Content,
+		PicInfo:   info.PicInfo,
+		VideoInfo: info.VideoInfo,
+	}
+	_, err := br.data.rc.CreateAppeal(ctx, request)
+	if err != nil {
+		return nil, err
+	}
+	return &model.ReviewAppealInfo{}, nil
+}

@@ -8,6 +8,7 @@ import (
 
 type BusinessRepo interface {
 	CreateReply(context.Context, *model.ReviewReplyInfo) (*model.ReviewReplyInfo, error)
+	CreateAppeal(context.Context, *model.ReviewAppealInfo) (*model.ReviewAppealInfo, error)
 }
 
 type BusinessUsecase struct {
@@ -47,4 +48,12 @@ func (uc *BusinessUsecase) CreateReply(ctx context.Context, info *model.ReviewRe
 		return nil, err
 	}
 	return reply, nil
+}
+
+func (uc *BusinessUsecase) CreateAppeal(ctx context.Context, info *model.ReviewAppealInfo) (*model.ReviewAppealInfo, error) {
+	appeal, err := uc.repo.CreateAppeal(ctx, info)
+	if err != nil {
+		return nil, err
+	}
+	return appeal, nil
 }
