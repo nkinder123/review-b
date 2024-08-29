@@ -51,6 +51,7 @@ func (uc *BusinessUsecase) CreateReply(ctx context.Context, info *model.ReviewRe
 }
 
 func (uc *BusinessUsecase) CreateAppeal(ctx context.Context, info *model.ReviewAppealInfo) (*model.ReviewAppealInfo, error) {
+	log.Info("[biz create appealy]")
 	appeal, err := uc.repo.CreateAppeal(ctx, info)
 	if err != nil {
 		return nil, err

@@ -40,6 +40,7 @@ func (br *businessrepo) CreateReply(ctx context.Context, replyInfo *model.Review
 }
 
 func (br *businessrepo) CreateAppeal(ctx context.Context, info *model.ReviewAppealInfo) (*model.ReviewAppealInfo, error) {
+	log.Info("[data create appealy]")
 	request := &v1.CreateAppealRequest{
 		AppealId:  info.AppealID,
 		ReviewId:  info.ReviewID,
@@ -50,7 +51,9 @@ func (br *businessrepo) CreateAppeal(ctx context.Context, info *model.ReviewAppe
 		PicInfo:   info.PicInfo,
 		VideoInfo: info.VideoInfo,
 	}
+	log.Info("[data rcp call]")
 	_, err := br.data.rc.CreateAppeal(ctx, request)
+	fmt.Printf("err:", err)
 	if err != nil {
 		return nil, err
 	}

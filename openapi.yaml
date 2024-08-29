@@ -25,6 +25,24 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/helloworld.v1.HelloReply'
+    /v1/business/create/appeal:
+        post:
+            tags:
+                - Business
+            operationId: Business_CreateAppeal
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.business.v1.CreateAppealRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.business.v1.CreateAppealReply'
     /v1/business/createreply:
         post:
             tags:
@@ -61,6 +79,42 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.review.v1.CreateReviewReply'
+    /v1/review/create/appeal:
+        post:
+            tags:
+                - Review
+            operationId: Review_CreateAppeal
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.review.v1.CreateAppealRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.review.v1.CreateAppealReply'
+    /v1/review/create/op:
+        post:
+            tags:
+                - Review
+            operationId: Review_OpReAppeal
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.review.v1.OpCreateAppealRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.review.v1.OpCreateAppealReply'
     /v1/review/delete:
         delete:
             tags:
@@ -97,6 +151,24 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.review.v1.ListReviewReply'
+    /v1/review/reply:
+        post:
+            tags:
+                - Review
+            operationId: Review_ReplyReview
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.review.v1.ReplyReviewReq'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.review.v1.ReplyReviewReply'
     /v1/review/update:
         put:
             tags:
@@ -117,6 +189,31 @@ paths:
                                 $ref: '#/components/schemas/api.review.v1.UpdateReviewReply'
 components:
     schemas:
+        api.business.v1.CreateAppealReply:
+            type: object
+            properties:
+                appealId:
+                    type: string
+        api.business.v1.CreateAppealRequest:
+            type: object
+            properties:
+                appealId:
+                    type: string
+                reviewId:
+                    type: string
+                storeId:
+                    type: string
+                status:
+                    type: integer
+                    format: int32
+                reason:
+                    type: string
+                content:
+                    type: string
+                picInfo:
+                    type: string
+                videoInfo:
+                    type: string
         api.business.v1.CreateReplyReq:
             type: object
             properties:
@@ -134,6 +231,31 @@ components:
             type: object
             properties:
                 replyId:
+                    type: string
+        api.review.v1.CreateAppealReply:
+            type: object
+            properties:
+                appealId:
+                    type: string
+        api.review.v1.CreateAppealRequest:
+            type: object
+            properties:
+                appealId:
+                    type: string
+                reviewId:
+                    type: string
+                storeId:
+                    type: string
+                status:
+                    type: integer
+                    format: int32
+                reason:
+                    type: string
+                content:
+                    type: string
+                picInfo:
+                    type: string
+                videoInfo:
                     type: string
         api.review.v1.CreateReviewReply:
             type: object
@@ -174,6 +296,38 @@ components:
         api.review.v1.ListReviewReply:
             type: object
             properties: {}
+        api.review.v1.OpCreateAppealReply:
+            type: object
+            properties:
+                appealId:
+                    type: string
+        api.review.v1.OpCreateAppealRequest:
+            type: object
+            properties:
+                appealId:
+                    type: string
+                opRemark:
+                    type: string
+                opUser:
+                    type: string
+        api.review.v1.ReplyReviewReply:
+            type: object
+            properties:
+                replyId:
+                    type: string
+        api.review.v1.ReplyReviewReq:
+            type: object
+            properties:
+                reviewId:
+                    type: string
+                storeId:
+                    type: string
+                content:
+                    type: string
+                picInfo:
+                    type: string
+                videoInfo:
+                    type: string
         api.review.v1.UpdateReviewReply:
             type: object
             properties: {}
